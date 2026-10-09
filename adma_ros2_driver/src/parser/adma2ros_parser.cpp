@@ -519,12 +519,19 @@ void ADMA2ROSParser::extractNavSatFix(
       nav_ros_msg.status.status = sensor_msgs::msg::NavSatStatus::STATUS_GBAS_FIX;
       break;
     default:
+      // NavSatStatus defaults to 0 == STATUS_FIX, so unknown modes must be set explicitly
+      nav_ros_msg.status.status = sensor_msgs::msg::NavSatStatus::STATUS_NO_FIX;
       break;
   }
 
   nav_ros_msg.altitude = ros_msg.finsheight + ros_msg.undulation;
   nav_ros_msg.latitude = ros_msg.finslatabs;
   nav_ros_msg.longitude = ros_msg.finslonabs;
+
+  // Before it has a solution the ADMA reports INT32_MAX * 1e-7 (214.748 deg) as lat/lon
+  if (std::abs(nav_ros_msg.latitude) > 90.0 || std::abs(nav_ros_msg.longitude) > 180.0) {
+    nav_ros_msg.status.status = sensor_msgs::msg::NavSatStatus::STATUS_NO_FIX;
+  }
   nav_ros_msg.position_covariance[0] = std::pow(ros_msg.finsstddevlat, 2);
   nav_ros_msg.position_covariance[4] = std::pow(ros_msg.finsstddevlong, 2);
   nav_ros_msg.position_covariance[8] = std::pow(ros_msg.finsstddevheight, 2);
@@ -556,6 +563,8 @@ void ADMA2ROSParser::extractNavSatFix(
       nav_ros_msg.status.status = sensor_msgs::msg::NavSatStatus::STATUS_GBAS_FIX;
       break;
     default:
+      // NavSatStatus defaults to 0 == STATUS_FIX, so unknown modes must be set explicitly
+      nav_ros_msg.status.status = sensor_msgs::msg::NavSatStatus::STATUS_NO_FIX;
       break;
   }
 
@@ -563,6 +572,11 @@ void ADMA2ROSParser::extractNavSatFix(
   nav_ros_msg.altitude = desiredSource == 0 ? ros_msg.ins_height : pois[desiredSource - 1].ins_height;
   nav_ros_msg.latitude = desiredSource == 0 ? ros_msg.ins_lat_abs : pois[desiredSource - 1].ins_lat_abs;
   nav_ros_msg.longitude = desiredSource == 0 ? ros_msg.ins_long_abs : pois[desiredSource - 1].ins_lon_abs;
+
+  // Before it has a solution the ADMA reports INT32_MAX * 1e-7 (214.748 deg) as lat/lon
+  if (std::abs(nav_ros_msg.latitude) > 90.0 || std::abs(nav_ros_msg.longitude) > 180.0) {
+    nav_ros_msg.status.status = sensor_msgs::msg::NavSatStatus::STATUS_NO_FIX;
+  }
   // add undulation to get WGS84 height for ROS standard
   nav_ros_msg.altitude += ros_msg.undulation;
   nav_ros_msg.position_covariance[0] = std::pow(ros_msg.ins_stddev_lat, 2);
