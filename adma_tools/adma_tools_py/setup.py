@@ -19,7 +19,8 @@ setup(
     license='MIT',
     entry_points={
         'console_scripts': [
-            'ros2csv = adma_tools_py.ros2csv_converter:main'
+            'ros2csv = adma_tools_py.ros2csv_converter:main',
+            'autoware_orientation = adma_tools_py.autoware_orientation_publisher:main',
         ],
     },
 )

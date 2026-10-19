@@ -9,6 +9,7 @@
 
   <depend>rclpy</depend>
   <depend>adma_ros_driver_msgs</depend>
+  <exec_depend>autoware_sensing_msgs</exec_depend>
 
   <export>
     <build_type>ament_python</build_type>
