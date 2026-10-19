@@ -1,10 +1,10 @@
 /**:
   adma_ros2_driver:
     ros__parameters:
-      destination_ip: '192.168.88.255'
-      destination_port: 11021
+      destination_ip: '0.0.0.0' # bind all: receives unicast to .100 and broadcast to .255
+      destination_port: 4444
       use_performance_check: False
-      protocol_version: 'v3.3.5'
+      protocol_version: 'v3.3.4'
       frame_ids:
         navsatfix: 'gnss_link'
         imu: 'imu_link'
@@ -20,4 +20,4 @@
         velocity: 1
         odometry: 1
       mode: 0 # 0 = live (default) / 1 = rosbag replay of raw data
-      time_mode: 0 # 0 = ADMA INS time / 1 = ROS system time 
+      time_mode: 1 # 0 = ADMA INS time / 1 = ROS system time 
